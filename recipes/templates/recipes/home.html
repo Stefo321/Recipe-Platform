@@ -1,0 +1,64 @@
+{% extends 'recipes/base.html' %}
+
+{% block title %}Home - Recipe Platform{% endblock %}
+
+{% block content %}
+<div class="jumbotron text-center py-5 bg-light">
+    <h1 class="display-4">Welcome to Recipe Platform</h1>
+    <p class="lead">Discover and share amazing recipes!</p>
+    {% if not user.is_authenticated %}
+    <p>
+        <a class="btn btn-primary btn-lg mx-2" href="{% url 'login' %}" role="button">Login</a>
+        <a class="btn btn-success btn-lg mx-2" href="{% url 'register' %}" role="button">Register</a>
+    </p>
+    {% endif %}
+</div>
+
+<div class="container mt-5">
+    <h2 class="mb-4">Latest Recipes</h2>
+    <div class="row">
+        {% for recipe in recipes %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                {% if recipe.image %}
+                    <img src="{{ recipe.image.url }}" class="card-img-top" alt="{{ recipe.title }}">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ recipe.title }}</h5>
+                    <p class="card-text">{{ recipe.description|truncatewords:20 }}</p>
+                    <p class="card-text"><small class="text-muted">By {{ recipe.author }}</small></p>
+                    <a href="{% url 'recipe-detail' recipe.id %}" class="btn btn-primary">View Recipe</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <p>No recipes available yet.</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="text-center mt-4">
+        <a href="{% url 'recipe-list' %}" class="btn btn-primary">View All Recipes</a>
+    </div>
+
+    {% if categories %}
+    <div class="mt-5">
+        <h2 class="mb-4">Browse by Category</h2>
+        <div class="row">
+            {% for category in categories %}
+            <div class="col-md-3 mb-3">
+                <a href="{% url 'recipe-list' %}?category={{ category.name }}" class="text-decoration-none">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ category.name }}</h5>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
